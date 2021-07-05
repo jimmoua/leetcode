@@ -1,0 +1,117 @@
+#include <bits/stdc++.h>
+#include <gtest/gtest.h>
+
+using namespace std;
+
+// Solution2 has time complexity of O(n^2) and is not very efficient
+class Solution2 {
+public:
+  bool checkInclusion(string s1, string s2) {
+    if(s1.length()>s2.length())
+    return false;
+
+    sort(s1.begin(), s1.end());
+    for(int i = 0; i <= s2.length()-s1.length(); i++) {
+      size_t found = s1.find(s2[i]);
+
+      if(found != string::npos) {
+        string x = s2.substr(i, s1.length());
+        sort(x.begin(), x.end());
+        if(s1 == x){
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+} foo;
+
+
+// Solution class below takes time complexity of O(n) and is much better. This isn't my own algorithm, however.
+class Solution {
+public:
+  bool checkMatch(vector<int> arr, vector<int> freq){
+    for(int i=0; i<26; ++i){
+      if(arr[i] != freq[i])
+        return false;
+    }
+    return true;
+  }
+  
+  bool checkInclusion(string s1, string s2) {
+    int n1=s1.length(); int n2=s2.length();
+    vector<int> arr(26, 0);
+    vector<int> freq(26, 0);
+    
+    if(n1>n2)
+      return false;
+    
+    for(int i=0; i<n1; ++i) {
+      freq[s1[i]-'a']++;
+    }
+
+    for(int i=0; i<n1; ++i) {
+      arr[s2[i]-'a']++;
+    }
+
+    if(checkMatch(arr, freq))
+      return true;
+
+    for(int i=n1; i<n2; ++i){
+      arr[s2[i]-'a']++;
+      arr[s2[i-n1]-'a']--;
+      if(checkMatch(arr, freq))
+        return true;
+    }
+
+    return false;
+  }
+};
+
+TEST(TestSuite, TestCase0) {
+  string s1 = "ab";
+  string s2 = "biak";
+  EXPECT_EQ(foo.checkInclusion(s1, s2), false);
+}
+
+TEST(TestSuite, TestCase1) {
+  string s1 = "ab";
+  string s2 = "eidbaooo";
+  EXPECT_EQ(foo.checkInclusion(s1, s2), true);
+}
+
+TEST(TestSuite, TestCase2) {
+  string s1 = "ab";
+  string s2 = "eidboaoo";
+  EXPECT_EQ(foo.checkInclusion(s1, s2), false);
+}
+
+TEST(TestSuite, TestCase3) {
+  string s1 = "a";
+  string s2 = "ab";
+  EXPECT_EQ(foo.checkInclusion(s1, s2), true);
+}
+
+TEST(TestSuite, TestCase4) {
+  string s1 = "algorithm";
+  string s2 = "altruistic";
+  EXPECT_EQ(foo.checkInclusion(s1, s2), false);
+}
+
+TEST(TestSuite, TestCase5) {
+  string s1 = "adc";
+  string s2 = "dcda";
+  EXPECT_EQ(foo.checkInclusion(s1, s2), true);
+}
+
+TEST(TestSuite, TestCase6) {
+  string s1 = "ajsbmzgzwrjwvzfxjqasaoreuulzmypibgubyxdbbinkdmmibetcnsekvprichjgjviodllxyqcrbzgwrkmrrtnmfljjtzajghpoyxcqvhouufwfjtclfrrecqqydzuyoawvnwcvpquebdqzssctviwyszhjpzyrhjhczhvfwvvmqffsmdxljkuzxgumsgeaxpogcgstgmqgmaxvtvtpvkipavimzthncsmdhzbylrgzkluhncojblhrdgjwynclbzbloqtupkltrokhhfdbxdncfmaeujfvtwcnqnrfrxukjeprefjttcptdpgjjanipbqtqorfwugztbjszzwekqmllmnupsanxqgrbzdelmqxjwmdlkbvcpxjyasvldwjftetktovoxkbksrjakrsvggwdrgtvpqfgeibybhkdkeckuokduykynvmreyirowvkxxnxjzwtxtasgaaaheefskmyuzyarfyycgiznvlowlaonpacjkwlhnwekhbziitcidcslknvpzplzcajixdhuzrdvhprjyfknepwjbxtgfhduurvixibfswzousjjnydblheoysyxptcpsxgiojcvpegnhbdbnyudslytzsytukrhcghwbpshmqmftpnqwitumzovcnutbcvghvvgasfoerywwejpndtkevysmygwcmlhamglmxiwvysseyphozwnytjecunsbesywipayxxvtypvdevlimywvpdvekzkqigkpgjychxemqlwocnivcyysmvwnqxblubdwynkegwmjzsdclwxyvlpjcoqqkbgtejezffucifrxaehmfcoieyscgiotjzwxpdtnjpinzlrybmdvlndppbxxnlnsdblujiuutzsgcqolbofvntqygsqozwjvnlgvsqphtsujcqsiqwlkdazdypivuriagqedzvxexkvkzlnnyydoavijoubqkpqpwcahtxfuvnkvltbdhtoehxzhwpxswmulwmjtucwlgwlrwpaoedjgraryzcvblaieqfinacqlpxsnezmofdjhvhmimysatnmnmzdravskbkswqobfxclzikeluahnulrsouiltqguoyjcpeioyrtnhcbyncwiyonzhsjwcnevmizkhcrhzgcbsukjsllnvlnqesqnifvkxyfxxanysjoujdsrhgwfarcbvqacedqdabqgguqtjtxztasvlyxjqajfsevrqyaxmezbqtxlfgrdltlskzszgcskhxndnvbrmrtclurrogsvfmeyavffpdmyquyhmyrgoprqtthqmutbomdwqmclpuuybyytizgobsqgplulesxrwokzcgojcskbtlbljtaqkmjkilvhpsyvlioirhcdsqtsvsddhqpgbpziemtvtafdcshoxqagrimqfehnjgnemgglugsixdfebvkekcvsmiwcwuysohwhwisvpkkrbwaqucmlbbulvvqwvpsurexghsnkxoxybhrrulvoenddlobqojsvdthcsrolgfqfamofeezmcqhgrlrwkobpqzvhkyypsaoyvaukxlmatnsygzbdnrvjhchrqaptanlqrunrnywxccdslymkstxpesrioqnuiamboiptmsqjgizkhdalkkcllfqxqsmvwuchrfmqynraxspqsvofqwfedfbxupyuostevhcrjypyffvbmjbfhrtzwwmqffiigwelokmgleogyxjrgbfrutaabvmevlsumwyeqffajfdvewwslehtdypputixbltwokylcsdtznvvhadzztkidhlufkizwkfaywybckwauovumplymvrsytbwnmjcvaheoowyhitihzddkzxqjiyvhhqqtxykvgztgcagcitgunlnefwgycojtijuuhygjfgxvyr";
+  string s2 = "prtwaywvvyqetvwyakpvekjhirlrtxxzyaodvwigtrdaeiizykaebcjuoenyhaoadnvxaasbecfpovauvvffvcnchdgffbbdhsrxigmtljvoqdiwjvsbpbkppvbxkxphzdkqumpuoacghmmicfjmondzxppomayqnvkclqzbuptslgzjnhjqggwedeuxormigkwjkqsgebufhhfdhqfuifnyboecqvnjhcgztlwoahcqwrksdcedhmqiqxjbqhaacrosnupiesatqfeglxfqgpsfiotytnrvgcvntmxblkkdblatbesaransxcvzeconimbuweevufhduxzcvozgrmkvxdwsiuheqqjjxjimliwehsaxmwjrncapcadzswwglxfnxsnpdbbyvxdwrrflwpjduxnwrjdogyrejrkmjpdncvxwqfcfpfcszzkislhxergkssurbjnuxzpzgkbegtkzbpdutwipdygmhbvspuwxxsapddzhppkkfxbrylvipexzubrzfbmhcqutjnqjbenmqfnowvujicgawxxynnzfubskzyihuohhahflqkrfkvvaimaptzqybjgpeomviozqnbmlgwftgeoztgzacujrolhlwkhjnmklhfyclxzmhfanwgvfhlexuxlpusgbgfdvtlccykeflwinskcahspqlesxrybqegqjmpzeiyhgvombebfsuqvnwqcifznxauupzqxmtejumabbwpjjnqvqrekwaackfvvcvbdcfidqytjhmswyovravwdaahiftspjdxwhbmiabtehdkzagabqiokpnmtpkhqfwacexshckfplcruinijigqdbsjqnskocnhchfsjytqkpbrodtffbsuislmyqpuvxruetrcobbibvipsnkrkrbvhguglpjbbotyrpletcpvfsptvlcdklkfrzjmyzzszzevgkezwltnykylohxoivhmfcmmzcxtmnjcbkrvxndxoisymvfengtcezyxozcyfoyvhqdnrxtfubmvvjxkzatdwcgkyplnzduxbvksxdlnstspxummjqukbcswezkkuwvepbjqoyewnbhiwmtxriunlkwdtgwgmgoqckfjcyxkoefbaizjkavybjlhqgfubhkeberznmokjwwbpkndbirtuvyuqqvfevpxedctnkgryructmtzntfkvpxdqznhtnipfeajehxsyraosvvlaivlehljrynbeczxcigrklnbfnlnqulpwoyvpokmwfjzdwwzpwmgiygxtnelwisdcvoflanozvlsadxngdjjbhyniprfwidzhsbtozgolyjerfzmsyeimyjdvzwcauenjnbymdvfoqepgcpcybqxvumijejcfettsdfsvdcgbylwsuaaemkxrvtilmrkscphywzlyrwahhmomqjhelgdgthiaekrbvmsarndqgodtrnowdjnspjjphomabvdbujimrezxfkhzxlkgagibgcavxemdkwtjltnufdfnkvtnhfsoqpntiwtnghlfhpupwhrdcbgjogbedsdyrtzlfcupbkubgzibcgoeuqehnhcfsztbfprrgmfphchqcgjjfxxggrvbpqawjwumuxkbiuujrzpgvwndckqhuhwpwljdntaqyrtwwkydbbduuqznqmbvssqrzixdgqswurstvpvboxykpndvmcrhccfduhjwbczqchwosugacufnoiramiygadmnbkyhtdcmlrliortwobmsirnbmqjchjrfesuodvaxagwfuhqqebjxqalnxaseyrbkmrgajtjmqeimyhrhrrrwvzwhhlddwdgqjvhtxrgntnyxvhjngksndttfqprcwjkoiztsuysbjvjpralkkgmdfzlfiayrbjezoyphgkictjpiqfrmdizcwcjcpyhrhmovytnuawtzdlclnvfkcoksvigpmvnptnqausmbvquhuhthkstmtmugjpjxgslluuxxfhyqtmedsmwglxuuzurkgmqdytrcvnvxrlqssjwoqlvmkmyeftktkmfulcutalzudpsmqvgjtfaegcszttcgxoosgqjhiutpnfmfikekfvokvjzxgjfbefrptsjmqijudwkajsdmztzwrjwvzfxjqasaoreuulzmypibgubyvdbbinkvmmibetcnsekvprichjgjviodllxyqcrbzgwrkmrrtnmfljjtzajghpoyxcqvhouufwfjtclfrrecqqydzuyoawvnwcvpquebdqzssctviwyszhjpzyrhjhczhvfwvvmqffsmwxljkukxgumsgeaxpogcgskgmqgmaxvtvtpvkipavimzthncsmdhzbylrrzkluhncojblhrogjwynclbzbloqtupkltrokhhfdbxdncfmaeujfvtwcnqnrfrxukpeprkfjttcptdpgjjaniybqtqorfwugztbjszzwekqmllmnupsanxqgrbzdelmqxewmdlkbvcpxjeasvldwsftetktovoxkbksrjaersvggwdrgtvpqfueibybhkdzeckuokduykynvmreyirowvklxnxjzwtxthsgaaaheefskhyuzyarfyycgiznvlowlaonpacjtwlhnwekhbziitcidcslknvpzplzcajixdhuzrdvhprjyfknepwjbxtgfhduurvixibfswzousjjnydblheoysyxptcpsxgiojcvpegembdbnyudrlytzsytukrhcghwbpshmqmftpnqwirukzovcnutbcvgvvvgasfoerywwejpndtkovysmygwcmfhamglmxiwvysseyqhozwnytjecunsbesywipayxxvtypvdevlimywvpddjkzkqigkpgjychxemplwocnivcyysmvwnqxblubdwynkegwmjzsdclwxyvlpjcoqqkbgtejezffucifrxaehmfcoieyscgiotjzwxpdtnjpinzlryjmdvlndppbxxnlnsdblujiugtzsgcqolbofvntqygsqozwjvnlgvsqphtsujcqsiqwxkdazdypivuriagqedzvxexkvkzlnnyydoaxijoubqkpqpwcahtxfuvnkvltbdhtoehxzhwpxswmulwmjoucwlgwlrwpaoedjgrarypcvblaiyqfinacqlpxsnezmofdjhvhmimysatnmnmzdravskbkswqobfxclzikeluahnulrsouiltqguoyjcpeioprtnhcbyncwiyonzhsjwcnevmizkhcrhzgcbsukjsllnvlnqesqnifvkxyfxxanysboujdsrhgwfarcbvqacesqdabqgguqtjwxztasvlyxjqajfsevrqyaxmezbqtxlfgrdltlskzszgcskhxndnvbrmrtclutrogsvfmeyavffjdmyquyhmyrgdprqtthqmutbomdwqmclxuuybgytizgobsqgplulesxrwokzcyojcsmbtlbljvaqkmjkilvhpsyvlioirhcdsqtsvdddhqpgbpziemtvtafdcshoxqagrimqfehnjgnemggljgjixdfnbhkekcvsmiwcwuysohwhwisvzkkrbwaqucmlbbulvvqwvpsurexghsnkxoxyhhrrulvoenddlobqojsvdthcsgolgfqfamofeezmcqhgrlrtkobpqzvhkyypsaoyvaukxlmatnsygzbdnrvjhcbrqaptanlqrunrnywxccdslymkstppesrioqnuiamboiptmsqjgizkhdalkkclllqxqsmvwuchrfmqynraxspqsvtfqwfedfbxupyuostevhcrjypyffvbmubfastzwwmqffiigwelowmglgogyxjrgbfrutaabvmevlsumwyeqffajfdvewwslehtbypputixbltdokylcsdgznvvhadzztkidhlufkizwkfaywybckkauovumplymvrsytbwnmjcvaheoewyhitihzddkzxqjiythhqqtxykvgztecagcitgunlnefwgycojtijuuhygjfgxvyrkukwwldvsbhvehtobdgmodtbmaiuccendlwyzcbojtnbzchlkubdvvoyjijzkgyscuelctrpitpfaftxufwxikoqcrsxlzoskvxncumcbhigxobqgpwhbdqxtjamzxuelrvlnijthgoljmrarcgosqlqzcxtukxjuxynnqkywiptwwtchkwndqfhhzsxeavryaybjcuidjbukzmcrwgahpqrmsgztknkfoaeypaemyorbqejfgifraujzjdzkhtdzhadhslqhwgsmuzmmqshsqjwdzssswribmeknttxvodehjosybfleqrgofwdieirdgtftipnqqmdfrgjttkhicdugvtaqxtibveuszsicjpglmdqxkieznybwkymliycilxssaoaffjahuidldmuvqvbftgqxkfwzvkuatgqbjezgfviubuubrukccymrwjgzfftytktbihgqdbgawdsqufxwvbcgssihzqkmrgyrbtdykrihhxtsbsygjyzmyjyycgvtpndoonqdhgrhdnjerjhmbiwhzrzwkduscdtjcxndjpvldzptewgwvkkqakknraduuzvssgxmpvcrhnplwsubqplminqelizpenrcnopyoogdhgmcztulqcmcrglhxsyavtfwavhauscsrtuvyzibpthznsqngwpxjdcgdrisynpjfxliirwyskfjyicfufxjlqrawktujyfttjzlkgytmmkurrwsuvizisewsgaqptntofjqodiliduitavocubvnskliuffpsvftknzlapmgjqffmbsrvduhhigjnskkhbcqequerdzqgcyjlqoxscbxgjixkogjzpvzrduniovkkvatvdgzpupkyjavxmhokgouuitoftdhhrzrkmxtbogxileadtrvbndmxggxegqfacruvqqlhxjmgurwbggqfbkccyqsnkpvhfsgjnicifphizihllesdrqkasdhdkwjzsvsvmwozxoyelirilnqywggxfrwcufbwasgsooofkjwcqgigobkojrarkdqdjclllceosjwuyrwvchusbuyablmjjwmgxpatxkgvmpjhzuyswcfkmgnzforanvkhklhwrlfnpgxsnanskwtptcdcqkiprmzortjrulgzmkyetpufnbpprkjerorforfnbrhlwsinqxehufgjvlglmeqkkfrnxppofdjpvgxxgwjdsxhdfbwscfkgtxxdxnsjsrtiyylmatqvglcidbofstcilzpgodcephqudwqkjyqjfouvdrslrwahbamkavzokwovemypzsqzksusrgvdnezghbyavxbrfqmbrabzcfurnnkvhljdufwbtjbkurgnhikketdzqbeoiulavhymvnfqybocoxwfkoxijouqlkiriozrmoipoxfkirgtscjyqeuubzbdaequjchbrthgkwpwexlzritpbghwbtkdagvummxtctmhbxxfibovfytrcgqggsfthyrhzejyukhyycekgdcytnhloyzmxneqnywmgfdntojwkzdmdlxnkkftafpbqveskwxdixeegukgzrjsxwbneoimkrngxigycjwzghrigfapoklmbmttgqjvyffkyxscjelcjvofforoqqsqvrumntgxwgwytlfleamuatuyxitrhvjjiacaoezmorhvlxmrebfxhcfopjrkreiyxzixzwutarxrqyhtnvuiaczscaguldraqslvvqutzugthofxfadbiygmjszftwywdgwrdalmhneserexzshikthojoqgjkwobgyfrumaxoxaqobzlvdzsoxzucvduimqxbyqmvxvtbwgalhxndrhstprjyywnogtoawcroiztdkpndwvkztxbrzfriandnaaqiqoopfzdsretxbvjqboppxkbgwmahyicwpwllvrlyymezomwkwtogqgbqcvexkleumfgfnhikojuhfszvvnswcegpshnpfnvfvpjcxsjtaitkylsoijdzadzrrevkrtevdzcybvjdqpkeeobbnrzbjlyrhaxzgtmbjzbjpsplghdlbwbyqefbyzindtzgsksufnipj";
+  EXPECT_EQ(foo.checkInclusion(s1, s2), true);
+}
+
+int main(int argc, char* argv[]) {
+  ::testing::InitGoogleTest(&argc, argv);
+  return RUN_ALL_TESTS();
+}
